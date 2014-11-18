@@ -104,9 +104,9 @@ begin
             redge => redge_tmp_inc);
     
     
-   load <= load_tmp when load_tmp = '1' and fedge_tmp_load = '1' else '0';
-   inc <= inc_tmp when inc_tmp = '1' and redge_tmp_inc = '1' else '0';
-   dec <= dec_tmp when dec_tmp = '1' and redge_tmp_dec = '1'else '0';
+   load <= BTN0;--load_tmp when load_tmp = '0';-- and fedge_tmp_load = '1' else '0';
+   inc <= BTN2;--inc_tmp when inc_tmp = '0';-- and redge_tmp_inc = '1' else '0';
+   dec <= BTN1;--dec_tmp when dec_tmp = '0';-- and redge_tmp_dec = '1'else '0';
 
    
 end;

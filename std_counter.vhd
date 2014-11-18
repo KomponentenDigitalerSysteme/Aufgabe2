@@ -43,41 +43,46 @@ END std_counter;
 -- zur Entity std_counter implementiert werden
 --
 ARCHITECTURE structure OF std_counter IS
-   signal counter: std_logic_vector(15 DOWNTO 0);
+   signal counter: std_logic_vector(16 DOWNTO 0);
 begin
     
     process(rst, clk) begin
         --if en = '1' then
         if rising_edge(clk) then
-           cout <= '0';
+--           cout <= '0';
            if rst = RSTDEF  or swrst = RSTDEF then
-              counter <= x"0000";
-           else
+              counter <= "00000000000000000";
+           else					
            if inc = '1' then
-              if counter < x"FFFF" then
-                 counter <= counter + 1;
-              else
+				  counter <= counter + 1;
+				  if counter = "10000000000000000" then
                  cout <= '1';
+					  counter <= "00000000000000000";
+				  else
+				     cout <= '0';
               end if;
            end if;
        
            if dec = '1' then
-              if counter > x"0000" then
-                 counter <= counter - 1;
-              else
+              counter <= counter - 1;
+				  if counter = "11111111111111111" then
                  cout <= '1';
+					  counter <= "01111111111111111";
+				  else
+				     cout <= '0';
               end if;
            end if;
                       
            if load = '1' then
-               counter <= din;
+               counter <= "0" & din;
            end if;
            end if;
         end if;
         
-        dout <= counter;
+        dout <= counter(15 DOWNTO 0);
     end process;
     
     --dout <= counter when rst /= RSTDEF and swrst /= RSTDEF else x"0000";    
-
+   --counter <= x"FFFF";
+   --dout <= din;
 end;

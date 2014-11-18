@@ -31,38 +31,45 @@ BEGIN
  
    process(rst, clk) begin
       if rising_edge(clk) then -- wait until????
-         if en = '1' then
-             if din = '0' then
-                 if cnt_hysterese < N_hysterese then
-                     cnt_hysterese <= cnt_hysterese + 1;
-                     fedge <= '0';
-                     redge <= '0';  
-                 else 
-                     dout <= '0';
-                     if din_old = '1' then
-                         fedge <= '1';
-                     end if;
-                     din_old <= din;
+			if en = '1' then
+				if din = '0' then
+					dout <= '1';
+				else
+					dout <= '0';
+				end if;
+			end if;
+         --if en = '1' then
+         --    if din = '0' then -- button pressed
+         --        if cnt_hysterese < N_hysterese then
+         --            cnt_hysterese <= cnt_hysterese + 1;
+         --           fedge <= '0';
+         --            redge <= '0';  
+         --        else 
+         --           dout <= '1';
+         --            if din_old = '1' then
+         --                fedge <= '1';
+         --            end if;
+         --            din_old <= din;
                     -- fedge <= falling_edge(din);
                 
                      
-                 end if;
-             else
-                if cnt_hysterese > 0 then 
-                   cnt_hysterese <= cnt_hysterese - 1; 
-                   fedge <= '0';
-                   redge <= '0';  
-                else 
-                   dout <= '1';
-                   if din_old = '0' then
-                         redge <= '1';
+         --        end if;
+         --    else
+         --       if cnt_hysterese > 0 then 
+         --          cnt_hysterese <= cnt_hysterese - 1; 
+         --          fedge <= '0';
+         --          redge <= '0';  
+         --       else 
+         --          dout <= '0';
+         --          if din_old = '0' then
+         --                redge <= '1';
                          
-                     end if;
-                     din_old <= din;
+         --            end if;
+         --            din_old <= din;
                    --redge <= rising_edge(din);
-                end if;  
-             end if;
-         end if;
+         --       end if;  
+         --    end if;
+         -- end if;
       end if;
    end process;
    
