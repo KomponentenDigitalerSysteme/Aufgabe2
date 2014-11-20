@@ -2,7 +2,7 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.std_logic_unsigned.ALL;
-
+USE ieee.numeric_std.ALL;
 ENTITY std_counter IS
    GENERIC(RSTDEF: std_logic := '1';
            CNTLEN: natural   := 4);
@@ -43,46 +43,39 @@ END std_counter;
 -- zur Entity std_counter implementiert werden
 --
 ARCHITECTURE structure OF std_counter IS
-   signal counter: std_logic_vector(16 DOWNTO 0);
+   signal counter: std_logic_vector(CNTLEN-1 DOWNTO 0);
 begin
     
+	 --cout <= counter(CNTLEN);--???????
+    dout <= counter; --???????
+	 
     process(rst, clk) begin
-        --if en = '1' then
-        if rising_edge(clk) then
---           cout <= '0';
-           if rst = RSTDEF  or swrst = RSTDEF then
-              counter <= "00000000000000000";
-           else					
-           if inc = '1' then
-				  counter <= counter + 1;
-				  if counter = "10000000000000000" then
-                 cout <= '1';
-					  counter <= "00000000000000000";
-				  else
-				     cout <= '0';
-              end if;
-           end if;
-       
-           if dec = '1' then
-              counter <= counter - 1;
-				  if counter = "11111111111111111" then
-                 cout <= '1';
-					  counter <= "01111111111111111";
-				  else
-				     cout <= '0';
-              end if;
-           end if;
-                      
-           if load = '1' then
-               counter <= "0" & din;
-           end if;
+		if rst = RSTDEF then
+			counter <= (OTHERS => '0');
+		elsif rising_edge(clk) then
+			  if swrst = RSTDEF then
+					counter <= (OTHERS => '0');
+           else -- en = '1' ???
+				  if load = '1' then
+					  counter <= din;
+				  elsif inc = '1' then
+						if counter = x"FFFF" then
+							cout <= '1';
+						else
+							cout <= '0';
+						end if;
+						counter <= counter + 1;
+				  elsif dec = '1' then
+						if counter = x"0000" then
+							cout <= '1';
+						else
+							cout <= '0';
+						end if;
+					   counter <= counter - 1;
+				  end if;
            end if;
         end if;
-        
-        dout <= counter(15 DOWNTO 0);
-    end process;
-    
-    --dout <= counter when rst /= RSTDEF and swrst /= RSTDEF else x"0000";    
-   --counter <= x"FFFF";
-   --dout <= din;
+	end process;
+		  
+		  
 end;

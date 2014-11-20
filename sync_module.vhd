@@ -77,9 +77,9 @@ begin
             swrst => swrst,
             en => enable,
             din => BTN0,
-            dout => load_tmp,
-            fedge => fedge_tmp_load,
-            redge => redge_tmp_load);
+            --dout => load_tmp,
+            --fedge => fedge_tmp_load,
+            redge => load);
    
    u1: sync_buffer
    GENERIC MAP(RSTDEF => RSTDEF)
@@ -88,9 +88,9 @@ begin
             swrst => swrst,
             en => enable,
             din => BTN1,
-            dout => dec_tmp,
-            fedge => fedge_tmp_dec,
-            redge => redge_tmp_dec);
+            --dout => dec_tmp,
+            fedge => dec);
+            --redge => redge_tmp_dec
     
    u2: sync_buffer
    GENERIC MAP(RSTDEF => RSTDEF)
@@ -99,14 +99,17 @@ begin
             swrst => swrst,
             en => enable,
             din => BTN2,
-            dout => inc_tmp,
-            fedge => fedge_tmp_inc,
-            redge => redge_tmp_inc);
+            --dout => inc_tmp,
+            fedge => inc);
+            --redge => redge_tmp_inc
     
     
-   load <= BTN0;--load_tmp when load_tmp = '0';-- and fedge_tmp_load = '1' else '0';
-   inc <= BTN2;--inc_tmp when inc_tmp = '0';-- and redge_tmp_inc = '1' else '0';
-   dec <= BTN1;--dec_tmp when dec_tmp = '0';-- and redge_tmp_dec = '1'else '0';
+   --load <= load_tmp when redge_tmp_load = '1' else '0';
+   --inc <= '1' when inc_tmp = '0' and fedge_tmp_inc = '1' else '0';
+   --dec <= '1' when dec_tmp = '0' and fedge_tmp_dec = '1' else '0';
 
+	--load <= '1' when redge_tmp_load = '1' else '0';
+   --inc <= '1' when fedge_tmp_inc = '1' AND BTN2 = '0' else '0';
+   --dec <= '1' when fedge_tmp_dec = '1' AND BTN1 = '0' else '0';
    
 end;

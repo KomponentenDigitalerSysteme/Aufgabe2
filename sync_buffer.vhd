@@ -24,55 +24,85 @@ ARCHITECTURE structure OF sync_buffer IS
     constant N_hysterese: natural := 32; -- 46???
     
     
-    signal clk_hysterese: std_logic;
+    --signal clk_hysterese: std_logic;
     signal cnt_hysterese : integer range 0 to N_hysterese - 1;
-    signal din_old : std_logic;
+    signal f1 : std_logic;
+	 signal f2 : std_logic;
+	 
+	 signal state : std_logic;
+	 
+	 
 BEGIN
  
+	
    process(rst, clk) begin
-      if rising_edge(clk) then -- wait until????
+		if rst = RSTDEF then
+			state <= '0';
+			cnt_hysterese <= 0;
+			fedge <= '0';
+			redge <= '0';
+		elsif rising_edge(clk) then
+			f1 <= din;
+			
+			if f1 = din then
+				f2 <= f1;
+			end if;
+			
 			if en = '1' then
-				if din = '0' then
-					dout <= '1';
-				else
-					dout <= '0';
+				--redge <= '0';
+				--fedge <= '0';
+				
+				if state = '0' then
+					--if din = '0' and cnt_hysterese = '0' then
+						--cnt_hysterese = cnt_hysterese;
+					--end if;
+					if f2 = '0' then
+						if cnt_hysterese > 0 then
+							cnt_hysterese <= cnt_hysterese - 1;
+						end if;
+					else
+						if cnt_hysterese < N_hysterese - 1 then
+							cnt_hysterese <= cnt_hysterese + 1;
+						end if;
+						if cnt_hysterese = N_hysterese - 1 then
+							state <= '1';
+							redge <= '1';
+						end if;
+					end if;
+					--dout <= state;
+					
+				else -- state = '1'
+					
+					if f2 = '1' then
+						--if cnt_hysterese = N_hysterese - 1 then
+							--cnt_hysterese = cnt_hysterese;
+						--end if;
+						if cnt_hysterese < N_hysterese - 1 then
+							cnt_hysterese <= cnt_hysterese + 1;
+						end if;
+					else
+						if cnt_hysterese > 0 then
+							cnt_hysterese <= cnt_hysterese - 1;
+						end if;
+						if cnt_hysterese = 0 then
+							state <= '0';
+							fedge <= '1';
+						end if;
+					end if;
+				--dout <= state;
 				end if;
 			end if;
-         --if en = '1' then
-         --    if din = '0' then -- button pressed
-         --        if cnt_hysterese < N_hysterese then
-         --            cnt_hysterese <= cnt_hysterese + 1;
-         --           fedge <= '0';
-         --            redge <= '0';  
-         --        else 
-         --           dout <= '1';
-         --            if din_old = '1' then
-         --                fedge <= '1';
-         --            end if;
-         --            din_old <= din;
-                    -- fedge <= falling_edge(din);
-                
-                     
-         --        end if;
-         --    else
-         --       if cnt_hysterese > 0 then 
-         --          cnt_hysterese <= cnt_hysterese - 1; 
-         --          fedge <= '0';
-         --          redge <= '0';  
-         --       else 
-         --          dout <= '0';
-         --          if din_old = '0' then
-         --                redge <= '1';
-                         
-         --            end if;
-         --            din_old <= din;
-                   --redge <= rising_edge(din);
-         --       end if;  
-         --    end if;
-         -- end if;
-      end if;
+		end if;
    end process;
-   
-   
+  
+	
+   --process(state) begin
+	--	if falling_edge(state) then
+--			fedge <= '1';
+--		end if;
+--		if rising_edge(state) then
+--			redge <= '1';
+--		end if;
+--	end process;
    
 END;
