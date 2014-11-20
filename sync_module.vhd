@@ -39,19 +39,7 @@ ARCHITECTURE structure OF sync_module IS
     constant N: natural := 2**15;
     signal cnt: integer range 0 to N-1;
     signal enable: std_logic;
-    
-    signal inc_tmp: std_logic;
-    signal dec_tmp: std_logic;
-    signal load_tmp: std_logic;
-    
-    signal fedge_tmp_load :std_logic;
-    signal redge_tmp_load :std_logic;
-    
-    signal fedge_tmp_inc :std_logic;
-    signal redge_tmp_inc :std_logic;
-    
-    signal fedge_tmp_dec :std_logic;
-    signal redge_tmp_dec :std_logic;
+   
 
 begin
    -- Modulo-2**15-Zaehler als Prozess

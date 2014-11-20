@@ -52,9 +52,11 @@ begin
     process(rst, clk) begin
 		if rst = RSTDEF then
 			counter <= (OTHERS => '0');
+			cout <= '0';
 		elsif rising_edge(clk) then
 			  if swrst = RSTDEF then
 					counter <= (OTHERS => '0');
+					cout <= '0';
            else -- en = '1' ???
 				  if load = '1' then
 					  counter <= din;
