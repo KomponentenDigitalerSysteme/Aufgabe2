@@ -18,15 +18,15 @@ END hex4x7seg;
 ARCHITECTURE struktur OF hex4x7seg IS
   -- hier sind benutzerdefinierte Konstanten und Signale einzutragen
   -- Modulo 2**14 Zaehler
-  constant N: natural := 2**14;
-  signal cnt: integer range 0 to N-1;
+  constant N: natural := 14;
+  signal cnt: std_logic_vector (N-1 DOWNTO 0);
   
   signal clk_en: std_logic;
   
   -- Modulo 4 Zaehler
-  constant N4: natural := 4;
-  signal cnt4: integer range 0 to N4-1;
-  signal an_tmp: std_logic_vector( 3 DOWNTO 0);
+  constant N4: natural := 2;
+  signal cnt4: std_logic_vector (N4-1 DOWNTO 0);
+  signal an_tmp: std_logic_vector(3 DOWNTO 0);
    
    -- 1-aus-4 Multiplexer fuer 7-aus-4 Decoder
    signal sel_number: std_logic_vector(3 DOWNTO 0);
@@ -35,17 +35,15 @@ BEGIN
    -- Modulo-2**14-Zaehler als Prozess
    process(rst, clk) begin
       if rst = RSTDEF then
-         cnt <= 0;
+         cnt <= (OTHERS => '0');
          clk_en <= '0';
       elsif rising_edge(clk) then
          clk_en <= '0';
          if en='1' then
             if cnt=N-1 then
                clk_en <= '1';
-               cnt <= 0;
-            else
-               cnt <= cnt +1;
             end if;
+				cnt <= cnt + 1;
          end if;
       end if;
    end process;
@@ -53,33 +51,31 @@ BEGIN
    -- Modulo-4-Zaehler als Prozess
    process(rst, clk, clk_en) begin
       if rst=RSTDEF then
-         cnt4 <= 0;
+         cnt4 <= (OTHERS => '0');
       elsif rising_edge(clk) then
          if clk_en='1' then
-            if cnt4=N4-1 then
-               cnt4 <= 0;
-            else
                cnt4 <= cnt4 + 1;
-            end if;
          end if;
       end if;
    end process;
 
    -- 1-aus-4-Dekoder als selektierte Signalzuweisung
    with cnt4 select
-      an_tmp <= "1110" when 0,
-                "1101" when 1,
-                "1011" when 2,
-                "0111" when 3;
+      an_tmp <= "1110" when "00",
+                "1101" when "01",
+                "1011" when "10",
+                "0111" when "11",
+					 "0000" when others;
    
    an <= an_tmp when rst /= RSTDEF and swrst /= RSTDEF else (others => '1');
 
    -- 1-aus-4-Multiplexer als selektierte Signalzuweisung SW
    with cnt4 select
-      sel_number  <= data(3 DOWNTO 0) when 0,
-                     data(7 DOWNTO 4) when 1,
-                     data(11 DOWNTO 8) when 2,
-                     data(15 DOWNTO 12) when 3;
+      sel_number  <= data(3 DOWNTO 0) when "00",
+                     data(7 DOWNTO 4) when "01",
+                     data(11 DOWNTO 8) when "10",
+                     data(15 DOWNTO 12) when "11",
+							"0000" when others;
    
    -- 7-aus-4-Dekoder als selektierte Signalzuweisung
    with sel_number select
@@ -104,9 +100,10 @@ BEGIN
    
    -- 1-aus-4-Multiplexer als selektierte Signalzuweisung
    with cnt4 select
-      dp <= not dpin(0) when 0,
-            not dpin(1) when 1,
-            not dpin(2) when 2,
-            not dpin(3) when 3;
+      dp <= not dpin(0) when "00",
+            not dpin(1) when "01",
+            not dpin(2) when "10",
+            not dpin(3) when "11",
+				'0' when others;
 
 END struktur;

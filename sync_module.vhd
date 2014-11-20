@@ -36,27 +36,27 @@ ARCHITECTURE structure OF sync_module IS
     END COMPONENT;
 
     
-    constant N: natural := 2**15;
-    signal cnt: integer range 0 to N-1;
+    constant N: natural := 14;
+	 signal cnt: std_logic_vector (N-1 DOWNTO 0);
     signal enable: std_logic;
    
 
 begin
-   -- Modulo-2**15-Zaehler als Prozess
+-- Modulo-2**14-Zaehler als Prozess
    process(rst, clk) begin
       if rst = RSTDEF then
-         cnt <= 0;
+         cnt <= (OTHERS => '0');
          enable <= '0';
       elsif rising_edge(clk) then
-         enable <= '0';
-            if cnt=N-1 then
-               enable <= '1';
-               cnt <= 0;
-            else
-               cnt <= cnt +1;
-            end if;
+			enable <= '0';
+			if cnt=N-1 then
+				enable <= '1';
+			end if;
+			cnt <= cnt + 1;
       end if;
    end process;
+   -- Modulo-2**15-Zaehler als Prozess
+   
     
    u0: sync_buffer
    GENERIC MAP(RSTDEF => RSTDEF)
