@@ -36,13 +36,13 @@ ARCHITECTURE structure OF sync_module IS
     END COMPONENT;
 
     
-    constant N: natural := 14;
+    constant N: natural := 15;
 	 signal cnt: std_logic_vector (N-1 DOWNTO 0);
     signal enable: std_logic;
    
 
 begin
--- Modulo-2**14-Zaehler als Prozess
+-- Modulo-2**15-Zaehler als Prozess
    process(rst, clk) begin
       if rst = RSTDEF then
          cnt <= (OTHERS => '0');
